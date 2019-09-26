@@ -122,6 +122,11 @@ object Dependencies {
   val jinJava: ModuleID = "com.hubspot.jinjava" % "jinjava" % "2.2.9"
 
   /**
+    * Scalate templating engine
+    */
+  val scalate: ModuleID = "org.scalatra.scalate" %% "scalate-core" % "1.9.3"
+
+  /**
     * Ficus is a lightweight companion to Typesafe config that makes it more Scala-friendly.
     * Ficus adds an as[A] method to a normal Typesafe Config so you can do things like config.as[ Option[Int] ]
     */

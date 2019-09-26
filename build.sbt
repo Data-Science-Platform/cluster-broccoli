@@ -24,6 +24,7 @@ lazy val server = project
       Dependencies.scalaguice,
       Dependencies.commonsLang,
       Dependencies.jinJava,
+      Dependencies.scalate,
       Dependencies.ficus,
       ws,
       guice,

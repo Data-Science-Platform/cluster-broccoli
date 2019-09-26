@@ -1,11 +1,15 @@
 package de.frosner.broccoli.templates
 
+import java.io.{File, PrintWriter, StringWriter}
+
 import de.frosner.broccoli.models._
 import com.hubspot.jinjava.JinjavaConfig
 import com.hubspot.jinjava.interpret.FatalTemplateErrorsException
+import org.fusesource.scalate.util.Resource
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import play.api.libs.json.{JsNumber, JsString}
+import org.fusesource.scalate.{Template, _}
 
 import scala.collection.JavaConversions._
 
@@ -231,6 +235,18 @@ class TemplateRendererSpec extends Specification with Mockito {
         parameterValues = Map("id" -> IntParameterValue(value))
       )
       templateRenderer.renderJson(instance) === JsNumber(value)
+    }
+
+    "test scalate" in {
+      val engine = new TemplateEngine()
+      val moustacheTemplate = "My name is {{=<% %>=}} <% name1 %>"
+      println("compiling stuff")
+      val template = engine.compileMoustache(moustacheTemplate)
+      println("done compiling stuff")
+      val output = engine.layout("abc.moustache", template, Map("name1"->"Sohaib"))
+      val output2 = engine.layout("abc.moustache", template, Map("name1"->"Sabir"))
+      output === "My name is Sohaib"
+      output2 === "My name is Sabir"
     }
   }
 }

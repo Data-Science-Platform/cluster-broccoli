@@ -4,6 +4,7 @@ import com.hubspot.jinjava.interpret.{FatalTemplateErrorsException, RenderResult
 import com.hubspot.jinjava.interpret.TemplateError.ErrorType
 import com.hubspot.jinjava.{Jinjava, JinjavaConfig}
 import de.frosner.broccoli.models.Instance
+import org.fusesource.scalate.TemplateEngine
 import play.api.libs.json.{JsValue, Json}
 
 import scala.collection.JavaConversions._
@@ -14,6 +15,7 @@ import scala.collection.JavaConversions._
   */
 class TemplateRenderer(jinjavaConfig: JinjavaConfig) {
   val jinjava = new Jinjava(jinjavaConfig)
+  val engine = new TemplateEngine()
 
   def renderForResult(instance: Instance): RenderResult = {
     val template = instance.template
