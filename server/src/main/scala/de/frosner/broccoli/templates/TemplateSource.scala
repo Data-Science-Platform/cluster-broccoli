@@ -1,6 +1,6 @@
 package de.frosner.broccoli.templates
 
-import de.frosner.broccoli.models.{ParameterInfo, Template}
+import de.frosner.broccoli.models.{ParameterInfo, Template, TemplateFormat}
 
 import scala.util.Try
 
@@ -18,6 +18,7 @@ trait TemplateSource {
 
   def loadTemplate(templateId: String,
                    templateString: String,
+                   templateFormat: TemplateFormat,
                    templateInfo: TemplateConfig.TemplateInfo): Try[Template] =
     Try {
 
@@ -36,6 +37,7 @@ trait TemplateSource {
       Template(
         id = templateId,
         template = templateString,
+        format = templateFormat,
         description = templateInfo.description.getOrElse(s"$templateId template"),
         parameterInfos = templateInfo.parameters
           .map { case (id, parameter) => id -> ParameterInfo.fromTemplateInfoParameter(id, parameter) }

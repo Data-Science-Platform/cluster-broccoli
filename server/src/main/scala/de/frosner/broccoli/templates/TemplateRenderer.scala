@@ -31,15 +31,14 @@ class TemplateRenderer(jinjavaConfig: JinjavaConfig) {
     jinjava.renderForResult(template.template, parameterValues)
   }
 
-  def renderJson(instance: Instance): JsValue = {
+  def render(instance: Instance): String = {
     val renderResult = renderForResult(instance)
     val fatalErrors = renderResult.getErrors.filter(error => error.getSeverity == ErrorType.FATAL)
 
     if (fatalErrors.nonEmpty) {
       throw new FatalTemplateErrorsException(instance.template.template, fatalErrors)
     }
-
-    Json.parse(renderResult.getOutput)
+    renderResult.getOutput
   }
 
   /**
