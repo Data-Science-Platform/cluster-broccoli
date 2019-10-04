@@ -233,7 +233,7 @@ class NomadHttpClient(
       case Some(JsString(s)) => Some(s)
       // For later versions the version information structure is nested
       case Some(JsObject(_)) => (lookup \ "Version").asOpt[String]
-      case _ => None
+      case _                 => None
     }
   }
 

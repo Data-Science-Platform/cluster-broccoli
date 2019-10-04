@@ -6,7 +6,10 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 
-case class Template(id: String, template: String, description: String, parameterInfos: Map[String, ParameterInfo],
+case class Template(id: String,
+                    template: String,
+                    description: String,
+                    parameterInfos: Map[String, ParameterInfo],
                     format: TemplateFormat = TemplateFormat.JSON)
     extends Serializable {
 

@@ -213,11 +213,15 @@ class NomadService @Inject()(nomadConfiguration: NomadConfiguration, ws: WSClien
     val endPoint = nomadBaseUrl + "/v1/jobs/parse"
     val request = requestWithHeaders(endPoint)
     Try {
-      val result = Await.result(request.post(JsObject(Seq("JobHCL" -> JsString(hclJob)))), Duration(5, TimeUnit.SECONDS))
+      val requestJson = JsObject(Seq("JobHCL" -> JsString(hclJob), "Canonicalize" -> JsBoolean(true)))
+      val result =
+        Await.result(request.post(requestJson), Duration(5, TimeUnit.SECONDS))
       if (result.status == 200) {
+        log.info("Successfully converted HCL job to JSON")
         Success(result.json)
       } else {
-        Failure(NomadRequestFailed(request.uri.toString, result.status))
+        log.error(s"Error parsing job HCL. Request body: ${requestJson.toString()}")
+        Failure(NomadRequestFailed(request.uri.toString, result.status, result.body))
       }
     }.flatten
   }

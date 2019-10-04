@@ -13,9 +13,8 @@ class TemplateRendererSpec extends Specification with Mockito {
   val templateRenderer =
     new TemplateRenderer(JinjavaConfig.newBuilder().withFailOnUnknownTokens(true).build())
 
-  def renderJson(instance: Instance): JsValue = {
-    Json.parse(templateRenderer.render(instance))
-  }
+  def renderJson(instance: Instance, renderer: TemplateRenderer = templateRenderer): JsValue =
+    Json.parse(renderer.render(instance))
 
   "TemplateRenderer" should {
     "render the template correctly when an instance contains a single parameter" in {
@@ -211,8 +210,7 @@ class TemplateRendererSpec extends Specification with Mockito {
         ),
         parameterValues = Map("id" -> RawParameterValue("Frank"))
       )
-
-      renderJson(instance) === JsString("Frank ")
+      renderJson(instance, templateRenderer) === JsString("Frank ")
     }
 
     "parse the template correctly when it has Integer parameters" in {

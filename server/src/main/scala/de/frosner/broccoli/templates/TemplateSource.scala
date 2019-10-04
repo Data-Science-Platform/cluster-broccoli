@@ -18,8 +18,8 @@ trait TemplateSource {
 
   def loadTemplate(templateId: String,
                    templateString: String,
-                   templateFormat: TemplateFormat,
-                   templateInfo: TemplateConfig.TemplateInfo): Try[Template] =
+                   templateInfo: TemplateConfig.TemplateInfo,
+                   templateFormat: TemplateFormat = TemplateFormat.JSON): Try[Template] =
     Try {
 
       require(

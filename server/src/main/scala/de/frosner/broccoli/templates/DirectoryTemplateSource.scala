@@ -41,18 +41,19 @@ class DirectoryTemplateSource(directory: String, val templateRenderer: TemplateR
     val templates = templateDirectories.flatMap(templateDirectory => {
       val tryTemplate = Try {
         val (format, templateFileContent) =
-        if (Files.isRegularFile(templateDirectory.resolve("template.json"))) {
-          (TemplateFormat.JSON, Source.fromFile(templateDirectory.resolve("template.json").toString).mkString)
-        } else if (Files.isRegularFile(templateDirectory.resolve("template.hcl"))) {
-          (TemplateFormat.HCL, Source.fromFile(templateDirectory.resolve("template.hcl").toString).mkString)
-        } else {
-          throw new IllegalArgumentException(s"Neither template.json nor template.hcl found in directory $templateDirectory")
-        }
+          if (Files.isRegularFile(templateDirectory.resolve("template.json"))) {
+            (TemplateFormat.JSON, Source.fromFile(templateDirectory.resolve("template.json").toString).mkString)
+          } else if (Files.isRegularFile(templateDirectory.resolve("template.hcl"))) {
+            (TemplateFormat.HCL, Source.fromFile(templateDirectory.resolve("template.hcl").toString).mkString)
+          } else {
+            throw new IllegalArgumentException(
+              s"Neither template.json nor template.hcl found in directory $templateDirectory")
+          }
         val templateId = templateDirectory.getFileName.toString
         val templateInfo =
           loadConfigOrThrow[TemplateConfig.TemplateInfo](
             ConfigFactory.parseFile(templateDirectory.resolve("template.conf").toFile))
-        loadTemplate(templateId, templateFileContent, format, templateInfo).get
+        loadTemplate(templateId, templateFileContent, templateInfo, format).get
       }
       tryTemplate.failed.map(throwable => log.error(s"Parsing template '$templateDirectory' failed: $throwable"))
       tryTemplate.toOption

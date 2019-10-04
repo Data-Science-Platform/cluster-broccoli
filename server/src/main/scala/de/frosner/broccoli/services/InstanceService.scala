@@ -272,18 +272,17 @@ class InstanceService @Inject()(nomadClient: NomadClient,
     maybeCreatedInstance.map(addStatuses)
   }
 
-  def jobJsonFromInstance(instance: Instance): Try[JsValue] = {
+  def jobJsonFromInstance(instance: Instance): Try[JsValue] =
     instance.template.format match {
       case TemplateFormat.JSON =>
         Try(Json.parse(templateRenderer.render(instance)))
       case TemplateFormat.HCL =>
         if (nomadClient.nomadVersion >= "0.9.1") {
-          nomadService.parseHCLJob(instance.template.template)
+          nomadService.parseHCLJob(templateRenderer.render(instance))
         } else {
           Failure(NomadRequestFailed("/v1/jobs/parse", 404, "HCL jobs are supported only after nomad 0.9.1"))
         }
     }
-  }
 
   def updateInstance(id: String,
                      statusUpdater: Option[JobStatus],
