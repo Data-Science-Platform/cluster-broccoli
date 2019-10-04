@@ -13,7 +13,7 @@ import play.api.libs.ws.WSClient
 import scala.util.Success
 
 class NomadServiceIntegrationSpec(implicit ee: ExecutionEnv)
-  extends Specification
+    extends Specification
     with WSClientContext
     with BroccoliDockerContext {
 
@@ -38,9 +38,10 @@ class NomadServiceIntegrationSpec(implicit ee: ExecutionEnv)
           |"MaxDelay":3600000000000,"Unlimited":true},"RestartPolicy":{"Attempts":2,"Delay":15000000000,
           |"Interval":1800000000000,"Mode":"fail"},"Spreads":null,"Tasks":null,"Update":null}],"Type":"service",
           |"Update":null,"VaultToken":"","Version":0}""".stripMargin)
-      val service = new NomadService(NomadConfiguration("http://localhost:4646", "NOMAD_BROCCOLI_TOKEN", false, ""), wsClient)
+      val service =
+        new NomadService(NomadConfiguration("http://localhost:4646", "NOMAD_BROCCOLI_TOKEN", false, ""), wsClient)
       val client = new NomadHttpClient(Url.parse("http://localhost:4646"), "NOMAD_BROCCOLI_TOKEN", wsClient)
-      if(client.nomadVersion < "0.9.1") {
+      if (client.nomadVersion < "0.9.1") {
         val result = service.parseHCLJob(hclJob)
         if (result == Success(jsonJob)) {
           success
