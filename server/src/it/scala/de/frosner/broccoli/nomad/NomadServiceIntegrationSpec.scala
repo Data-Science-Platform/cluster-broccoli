@@ -41,7 +41,7 @@ class NomadServiceIntegrationSpec(implicit ee: ExecutionEnv)
       val service =
         new NomadService(NomadConfiguration("http://localhost:4646", "NOMAD_BROCCOLI_TOKEN", false, ""), wsClient)
       val client = new NomadHttpClient(Url.parse("http://localhost:4646"), "NOMAD_BROCCOLI_TOKEN", wsClient)
-      if (client.nomadVersion < "0.9.1") {
+      if (client.nomadVersion >= "0.9.1") {
         val result = service.parseHCLJob(hclJob)
         if (result == Success(jsonJob)) {
           success

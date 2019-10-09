@@ -62,7 +62,7 @@ class NomadHttpClientIntegrationSpec(implicit ee: ExecutionEnv)
       } yield {
         allocations must beRight(
           (v: WithId[immutable.Seq[Allocation]]) => (v.jobId === identifier) and (v.payload must have length 1))
-      }).await(5, broccoliDockerConfig.startupPatience + 2.seconds)
+      }).await(5, broccoliDockerConfig.startupPatience + 10.seconds)
     }
   }
 }
