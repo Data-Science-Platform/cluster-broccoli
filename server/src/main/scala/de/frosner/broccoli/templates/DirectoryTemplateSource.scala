@@ -23,9 +23,12 @@ class DirectoryTemplateSource(directory: String, val templateRenderer: TemplateR
   log.info(s"Starting $this")
 
   /**
+    * Templates loaded from the directory are always up to date.
+    * We ignore the refresh capability here
+    *
     * @return The sequence of templates found in the directory
     */
-  override def loadTemplates: Seq[Template] = {
+  override def loadTemplates(refreshed: Boolean): Seq[Template] = {
     val rootTemplatesDirectory = FileSystems.getDefault.getPath(directory).toAbsolutePath
 
     if (!Files.isDirectory(rootTemplatesDirectory)) {
