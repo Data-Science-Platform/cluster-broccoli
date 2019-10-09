@@ -6,7 +6,7 @@ services:
 jdk:
   - openjdk8
 node_js:
-  - node
+  - 12
 
 before_script:
   - uname -r
@@ -36,7 +36,7 @@ jobs:
       script:
         - . prepare-docker-builds
         # build and test against old nomad
-        - docker build --build-arg nomad_version=0.4.0 -t frosner/cluster-broccoli-test docker/test/
+        - docker build --build-arg nomad=0.4.0 -t frosner/cluster-broccoli-test docker/test/
         - sbt it:test
         - bash <(curl -s https://raw.githubusercontent.com/FRosner/http-api-tester/master/http-api-tester) -v -d http-api-tests/instance-persistence-couchdb
         - bash <(curl -s https://raw.githubusercontent.com/FRosner/http-api-tester/master/http-api-tester) -v -d http-api-tests/broccoli-only
@@ -44,7 +44,7 @@ jobs:
         - bash <(curl -s https://raw.githubusercontent.com/FRosner/http-api-tester/master/http-api-tester) -v -d http-api-tests/broccoli-nomad-consul
         - bash <(curl -s https://raw.githubusercontent.com/FRosner/http-api-tester/master/http-api-tester) -v -d http-api-tests/instance-persistence-dir
         # build and test against new nomad
-        - docker build --build-arg nomad_version=0.9.5 -t frosner/cluster-broccoli-test docker/test/
+        - docker build --build-arg nomad=0.9.5 -t frosner/cluster-broccoli-test docker/test/
         - sbt it:test
         # TLS part, with nomad
         - docker build -t frosner/cluster-broccoli-test-tls -f docker/test/Dockerfiletls docker/test/
