@@ -3,6 +3,7 @@ package de.frosner.broccoli.nomad
 import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 
+import cats.data.EitherT
 import cats.syntax.either._
 import cats.instances.future._
 import io.lemonlabs.uri.Url

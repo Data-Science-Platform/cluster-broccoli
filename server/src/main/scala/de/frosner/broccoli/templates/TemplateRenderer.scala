@@ -4,7 +4,6 @@ import com.hubspot.jinjava.interpret.{FatalTemplateErrorsException, RenderResult
 import com.hubspot.jinjava.interpret.TemplateError.ErrorType
 import com.hubspot.jinjava.{Jinjava, JinjavaConfig}
 import de.frosner.broccoli.models.Instance
-import play.api.libs.json.{JsValue, Json}
 
 import scala.collection.JavaConversions._
 
