@@ -75,7 +75,7 @@ class InstanceServiceSpec extends Specification with Mockito with ServiceMocks {
 
     "not invoke parseHCLJob from nomadservice if version is older" in {
       val service = new InstanceService(
-        nomadClient = withNomadVersion(mock[NomadClient], "0.9.0"),
+        nomadClient = withNomadVersion(mock[NomadClient], "0.8.0"),
         nomadService = mockNomad,
         templateService = withTemplates(mock[TemplateService], List.empty),
         consulService = mock[ConsulService],
