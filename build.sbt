@@ -70,14 +70,16 @@ lazy val server = project
           else {
             val specials = Set('_', '.', '-')
             val notAllowedBegin = Set('.', '-)
-            name.zipWithIndex.map {
-              case (c, i) =>
-                val out = if (c.isLetterOrDigit || specials.contains(c)) c else '_'
-                i match {
-                  case 0 => if (notAllowedBegin.contains(out)) '_' else out
-                  case _ => out
-                }
-            }.mkString("")
+            name.zipWithIndex
+              .map {
+                case (c, i) =>
+                  val out = if (c.isLetterOrDigit || specials.contains(c)) c else '_'
+                  i match {
+                    case 0 => if (notAllowedBegin.contains(out)) '_' else out
+                    case _ => out
+                  }
+              }
+              .mkString("")
         })
         .map { tag =>
           List("-t", s"${dockerUsername.value.get}/${(packageName in Docker).value}:$tag")
