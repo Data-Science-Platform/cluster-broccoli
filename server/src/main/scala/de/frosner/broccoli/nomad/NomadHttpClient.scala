@@ -228,12 +228,10 @@ class NomadHttpClient(
   }
 
   private def getNomadVersion(): Option[String] = {
-    println("getting nomad version from url " + v1 / "agent" / "self")
     val result = Await.result(requestWithHeaders(v1 / "agent" / "self")
                                 .withHeaders(ACCEPT -> JSON)
                                 .get(),
                               Duration(5, TimeUnit.SECONDS))
-    println("Done with request")
     val lookup = result.json \ "config" \ "Version"
     lookup.toOption match {
       case Some(JsString(s)) => Some(s)
