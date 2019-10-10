@@ -3,7 +3,6 @@ package de.frosner.broccoli.nomad
 import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 
-import cats.data.EitherT
 import cats.syntax.either._
 import cats.instances.future._
 import io.lemonlabs.uri.Url
@@ -33,6 +32,7 @@ class NomadHttpClient(
     client: WSClient
 )(implicit override val executionContext: ExecutionContext)
     extends NomadClient {
+  import NomadHttpClient._
 
   private val log = play.api.Logger(getClass)
 
@@ -136,7 +136,10 @@ class NomadHttpClient(
     * Nomad Version. Initiated lazily
     */
   override lazy val nomadVersion: String = getNomadVersion()
-    .getOrElse { log.warn("Error fetching nomad version defaulting to 0.4.0"); "0.4.0" }
+    .getOrElse {
+      log.warn(s"Error fetching nomad version defaulting to $NOMAD_V_FOR_PARSE_API");
+      NOMAD_V_FOR_PARSE_API
+    }
 
   /**
     * Helper method that adds AUTH headers to request
@@ -263,4 +266,10 @@ class NomadHttpClient(
     EitherT(response.map(_.asRight).recover {
       case _: ConnectException => NomadError.Unreachable.asLeft
     })
+}
+
+object NomadHttpClient {
+  // The minimum version of nomad needed before /v1/jobs/parse works.
+  // This is also the default version of nomad we use when the we can't fetch the version
+  val NOMAD_V_FOR_PARSE_API = "0.8.2"
 }

@@ -24,7 +24,8 @@ class NomadServiceIntegrationSpec(implicit ee: ExecutionEnv)
     BroccoliDockerContext.Configuration.services(Broccoli, Nomad)
 
   "The NomadService" should {
-    "parse HCL jobs for nomad version >= 0.9.1" >> { wsClient: WSClient =>
+    import NomadHttpClient.NOMAD_V_FOR_PARSE_API
+    s"parse HCL jobs for nomad version >= $NOMAD_V_FOR_PARSE_API" >> { wsClient: WSClient =>
       val hclJob = "job \"example\" { type = \"service\" group \"cache\" {} }"
       val jsonJob = Json.parse(
         """{"Affinities":null,"AllAtOnce":false,"Constraints":null,"CreateIndex":0,"Datacenters":null,
@@ -41,7 +42,7 @@ class NomadServiceIntegrationSpec(implicit ee: ExecutionEnv)
       val service =
         new NomadService(NomadConfiguration("http://localhost:4646", "NOMAD_BROCCOLI_TOKEN", false, ""), wsClient)
       val client = new NomadHttpClient(Url.parse("http://localhost:4646"), "NOMAD_BROCCOLI_TOKEN", wsClient)
-      if (client.nomadVersion >= "0.9.1") {
+      if (client.nomadVersion >= NOMAD_V_FOR_PARSE_API) {
         val result = service.parseHCLJob(hclJob)
         if (result == Success(jsonJob)) {
           success
@@ -49,7 +50,7 @@ class NomadServiceIntegrationSpec(implicit ee: ExecutionEnv)
           failure(s"Failed to match json. Got $result")
         }
       } else {
-        skipped("Skipping as nomad version is older")
+        skipped(s"Skipping as nomad version is older than $NOMAD_V_FOR_PARSE_API")
       }
     }
   }

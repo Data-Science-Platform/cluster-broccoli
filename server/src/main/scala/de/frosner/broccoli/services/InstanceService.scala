@@ -13,7 +13,7 @@ import de.frosner.broccoli.instances.storage.InstanceStorage
 import de.frosner.broccoli.logging
 import de.frosner.broccoli.models.JobStatus.JobStatus
 import de.frosner.broccoli.models._
-import de.frosner.broccoli.nomad.{NomadClient, NomadConfiguration}
+import de.frosner.broccoli.nomad.{NomadClient, NomadConfiguration, NomadHttpClient}
 import play.api.Configuration
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.json.{JsValue, Json}
@@ -277,7 +277,7 @@ class InstanceService @Inject()(nomadClient: NomadClient,
       case TemplateFormat.JSON =>
         Try(Json.parse(templateRenderer.render(instance)))
       case TemplateFormat.HCL =>
-        if (nomadClient.nomadVersion >= "0.9.1") {
+        if (nomadClient.nomadVersion >= NomadHttpClient.NOMAD_V_FOR_PARSE_API) {
           nomadService.parseHCLJob(templateRenderer.render(instance))
         } else {
           Failure(NomadRequestFailed("/v1/jobs/parse", 404, "HCL jobs are supported only after nomad 0.9.1"))
