@@ -48,7 +48,7 @@ jobs:
         - sbt it:test
         # TLS part, with nomad
         - docker build -t frosner/cluster-broccoli-test-tls -f docker/test/Dockerfiletls docker/test/
-        - bash <(curl -s https://raw.githubusercontent.com/ynux/http-api-tester/master/http-api-tester) -v -o ge -d http-api-tests-tls/broccoli-nomad
+        - bash <(curl -s https://raw.githubusercontent.com/ynux/http-api-tester/master/http-api-tester) -v -o ge -d http-api-tests/broccoli-nomad-tls
     - stage: docker
       script:
         # Publish docker image
