@@ -8,7 +8,7 @@ import de.frosner.broccoli.models.Instance
 import scala.collection.JavaConversions._
 
 /**
-  * Renders json representation of the passed instance
+  * Renders a job file from a template
   * @param jinjavaConfig Jinjava configuration
   */
 class TemplateRenderer(jinjavaConfig: JinjavaConfig) {
