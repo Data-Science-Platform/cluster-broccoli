@@ -6,6 +6,7 @@ import cats.data.EitherT
 import cats.instances.future._
 import cats.instances.list._
 import cats.syntax.traverse._
+import play.api.Logger
 import de.frosner.broccoli.auth.Account
 import de.frosner.broccoli.models.{AllocatedTask, InstanceError, InstanceTasks, InstanceWithStatus}
 import de.frosner.broccoli.nomad.models.{
@@ -37,6 +38,8 @@ class NomadInstances @Inject()(nomadClient: NomadClient, instanceService: Instan
 
   type InstanceT[R] = EitherT[Future, InstanceError, R]
 
+  val nomadLogger: Logger = Logger("nomad")
+
   /**
     * Get all allocated tasks of the given instance.
     *
@@ -57,10 +60,20 @@ class NomadInstances @Inject()(nomadClient: NomadClient, instanceService: Instan
       instance <- EitherT
         .fromOption[Future](instanceService.getInstance(instanceId), InstanceError.NotFound(instanceId, None))
       instanceJobId = tag[Job.Id](instance.instance.id)
+
+      // TODO: EXCEPTION
+
       instanceJobTasks <- getJobTasks(instanceJobId, instance.instance.namespace).recover {
         // In case we don't have any job we might still have periodic jobs. So we don't want to fail here already.
         case InstanceError.NotFound(_, _) => List.empty
+        case ex: InstanceError => {
+          nomadLogger.info(s"Nomad erturned an error: $ex.reason")
+          List.empty // Avoid Broccoli going down
+        }
       }
+
+      // TODO: EXCEPTION
+
       periodicRunJobTasks <- instance.periodicRuns
         .map { run =>
           val jobName = tag[Job.Id](run.jobName)
@@ -99,10 +112,17 @@ class NomadInstances @Inject()(nomadClient: NomadClient, instanceService: Instan
         .getAllocation(allocationId, instance.instance.namespace)
         .leftMap(toInstanceError(jobId))
         .ensure(InstanceError.NotFound(jobId))(_.jobId == jobId)
+
       node <- nomadClient.allocationNodeClient(allocation).leftMap(toInstanceError(jobId))
+
+      // Exception here TODO catch
+
       log <- node
         .getTaskLog(allocationId, taskName, logKind, offset, instance.instance.namespace)
         .leftMap(toInstanceError(jobId))
+
+      // Exception here TODO catch
+
     } yield log.contents
 
   def getAllocationLog(user: Account)(
@@ -137,6 +157,7 @@ class NomadInstances @Inject()(nomadClient: NomadClient, instanceService: Instan
   private def getJobTasks(jobId: String @@ Job.Id,
                           namespace: Option[String]): EitherT[Future, InstanceError, immutable.Seq[AllocatedTask]] =
     for {
+
       // Request job information and allocations in parallel, to get the required resources for tasks and the actual
       // allocated tasks and their resources.  We can't extract the pair with a pattern unfortunately because as of
       // Scala 2.11 the compiler still tries to insert .withFilter calls even for irrefutable patterns, which EitherT
